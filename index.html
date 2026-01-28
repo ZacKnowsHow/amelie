@@ -321,7 +321,7 @@
 
     <script>
         // Password protection
-        const PASSWORD = "your_password_here"; // Change this to your desired password
+        const PASSWORD = "BBG"; // Change this to your desired password
         
         function checkPassword() {
             const input = document.getElementById('passwordInput').value;
@@ -382,6 +382,19 @@
             photos.push(`photo (${i}).JPEG`);
         }
 
+        // Shuffle array function (Fisher-Yates algorithm)
+        function shuffleArray(array) {
+            const shuffled = [...array];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
+        }
+
+        // Randomize the photo order
+        const shuffledPhotos = shuffleArray(photos);
+
         let currentIndex = 0;
         let isPlaying = true;
         let intervalId;
@@ -393,7 +406,7 @@
         const nextBtn = document.getElementById('nextBtn');
 
         // Create all photo elements
-        photos.forEach((photo, index) => {
+        shuffledPhotos.forEach((photo, index) => {
             const img = document.createElement('img');
             // Only load the first image immediately, lazy load the rest
             if (index === 0) {
@@ -421,23 +434,23 @@
                     photo.classList.add('active');
                     
                     // Preload next photo
-                    const nextIndex = (index + 1) % photos.length;
+                    const nextIndex = (index + 1) % shuffledPhotos.length;
                     if (photoElements[nextIndex].dataset.src) {
                         photoElements[nextIndex].src = photoElements[nextIndex].dataset.src;
                         delete photoElements[nextIndex].dataset.src;
                     }
                 }
             });
-            counter.textContent = `${index + 1} / ${photos.length}`;
+            counter.textContent = `${index + 1} / ${shuffledPhotos.length}`;
         }
 
         function nextPhoto() {
-            currentIndex = (currentIndex + 1) % photos.length;
+            currentIndex = (currentIndex + 1) % shuffledPhotos.length;
             showPhoto(currentIndex);
         }
 
         function prevPhoto() {
-            currentIndex = (currentIndex - 1 + photos.length) % photos.length;
+            currentIndex = (currentIndex - 1 + shuffledPhotos.length) % shuffledPhotos.length;
             showPhoto(currentIndex);
         }
 
