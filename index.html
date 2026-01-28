@@ -207,7 +207,12 @@
         // Create all photo elements
         photos.forEach((photo, index) => {
             const img = document.createElement('img');
-            img.src = photo;
+            // Only load the first image immediately, lazy load the rest
+            if (index === 0) {
+                img.src = photo;
+            } else {
+                img.dataset.src = photo;
+            }
             img.className = 'photo';
             if (index === 0) img.classList.add('active');
             img.alt = `Photo ${index + 1}`;
@@ -220,7 +225,19 @@
             photoElements.forEach((photo, i) => {
                 photo.classList.remove('active');
                 if (i === index) {
+                    // Load the image if it hasn't been loaded yet
+                    if (photo.dataset.src) {
+                        photo.src = photo.dataset.src;
+                        delete photo.dataset.src;
+                    }
                     photo.classList.add('active');
+                    
+                    // Preload next photo
+                    const nextIndex = (index + 1) % photos.length;
+                    if (photoElements[nextIndex].dataset.src) {
+                        photoElements[nextIndex].src = photoElements[nextIndex].dataset.src;
+                        delete photoElements[nextIndex].dataset.src;
+                    }
                 }
             });
             counter.textContent = `${index + 1} / ${photos.length}`;
